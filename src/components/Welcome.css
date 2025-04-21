@@ -1,0 +1,33 @@
+/* Estilos para la página de bienvenida */
+.welcome-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    background: linear-gradient(to bottom, #006699, #004d7a); /* Gradiente de azul */
+    color: white;
+    font-family: 'Arial', sans-serif;
+  }
+  
+  h2 {
+    font-size: 3rem;
+    margin-bottom: 20px;
+  }
+  
+  p {
+    font-size: 1.5rem;
+    margin-bottom: 40px;
+    text-align: center;
+  }
+  
+  @media (max-width: 768px) {
+    h2 {
+      font-size: 2rem;
+    }
+  
+    p {
+      font-size: 1.2rem;
+    }
+  }
+  
