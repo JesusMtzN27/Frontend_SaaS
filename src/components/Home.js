@@ -5,7 +5,7 @@ import "./Home.css"; // Importar el archivo CSS
 const Home = () => {
   return (
     <div className="home-container">
-      <div className="welcome-message">
+      <div className="home-message">
         <h1>Bienvenido a la WebApp</h1>
         <p>Tu plataforma para un futuro más eficiente</p>
         <Link to="/login">
