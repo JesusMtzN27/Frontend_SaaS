@@ -1,36 +1,54 @@
-// src/Welcome.js
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import './Welcome.css'; // Importar el archivo CSS
-//import ReportMenu from './ReportMenu'; // Importa el componente ReportMenu
 
 const Welcome = () => {
-  //const username = localStorage.getItem("username");
+  // Estado para guardar la URL del reporte de QuickSight
+  const [reportUrl, setReportUrl] = useState(null);
+  const [error, setError] = useState(null);
+
+  // Realizar la solicitud para obtener la URL del reporte cuando el componente se monta
+  useEffect(() => {
+    const fetchReportUrl = async () => {
+      try {
+        const apiUrl = "http://demo.operaria.test"; // Usar la variable de entorno
+        const response = await fetch(`${apiUrl}/api/get-report-urlqs?language=es&page=NOM035-ES`); // Cambiar la URL según sea necesario
+        
+        if (!response.ok) {
+          throw new Error('No se pudo obtener la URL del reporte');
+        }
+        
+        const data = await response.json();
+        if (data.reportUrl) {
+          setReportUrl(data.reportUrl); // Guardar la URL del reporte
+          setError(null); // Limpiar el error
+        } else {
+          setError('Reporte no encontrado');
+        }
+      } catch (error) {
+        setError('Hubo un error al cargar el reporte');
+        console.error(error);
+      }
+    };
+
+    fetchReportUrl();
+  }, []); // Solo se ejecuta una vez cuando el componente se monta
 
   return (
     <div className="welcome-container">
-      {/* <div className="report-menu-container">
-        <ReportMenu />
-      </div>
+      {error && <div className="error-message">{error}</div>}
 
-      <br />
-
-      <div className="welcome-message">
-        <h2>Bienvenido, {username}!</h2>
-        <p>¡Aquí está tu contenido exclusivo después de iniciar sesión!</p>
-        
-      </div> */}
-
-      <br />
-      <br />
-      
-      <iframe
+      {reportUrl ? (
+        <iframe
           title="QuickSight Report"
-          width="100%"
-          height="1000"
-          src="https://us-east-1.quicksight.aws.amazon.com/embed/f7ddd7b266ec4faebffd7c91355ec6e6/dashboards/f2f70081-8331-4fb5-918f-000af02298d6?identityprovider=quicksight&isauthcode=true&code=AYABeAP8e7OsDXErCo5dYNJO8TYAAAABAAdhd3Mta21zAEthcm46YXdzOmttczp1cy1lYXN0LTE6MjU5NDgwNDYyMTMyOmtleS81NGYwMjdiYy03MDJhLTQxY2YtYmViNS0xNDViOTExNzFkYzMAuAECAQB4g1oL4hdUJZc1aKfcGo-VQb_jBEsh0RowAd9MxoJqXpEBHHW81baC10bDW6At7MTpNwAAAH4wfAYJKoZIhvcNAQcGoG8wbQIBADBoBgkqhkiG9w0BBwEwHgYJYIZIAWUDBAEuMBEEDG0sHoEwr33KwdG38wIBEIA7lOk8W5ttNmLP7NQTcnjNRizofUJXZt29xL0oBRDUbNEmcTBW_f7HAwB_hUY5d90cGvOxNo-Vkwht4ToCAAAAAAwAABAAAAAAAAAAAAAAAAAACrYqq_q9yDB2SzVezo_KQf____8AAAABAAAAAAAAAAAAAAABAAAAm_br3tHchlGdxIVnYExqosDy8bDQrXWTwybNAlA6E8bF5sjoxRL5K5W-5DA_8jUA6do_fD_6211UWedu6hgmoz6R2z1TwoSH20nXn2UbJ5CI23l38OldMq4mcePwAzd19c8SN0xw22fqISEp-KOcsF03lslIvuU85pfsONaWE5_-ffjBfZjAFpeqK-Y36GjvezRZeLQTddc87bpytbHmzPAhnw0q9qm_xhLiAA%3D%3D" // Demography
+          width="99%"
+          height="800"
+          // src={reportUrl}  // Asignamos la URL que obtuvimos del backend          
+          src="https://us-east-1.quicksight.aws.amazon.com/embed/f4c1e9da8de043078dcf4ebb28fba20c/dashboards/bbd88437-f6e1-4707-9e53-7cb5389b41f3?identityprovider=quicksight&isauthcode=true&code=AYABeJgKBaavpm0WhVsPWXbtmrAAAAABAAdhd3Mta21zAEthcm46YXdzOmttczp1cy1lYXN0LTE6MjU5NDgwNDYyMTMyOmtleS81NGYwMjdiYy03MDJhLTQxY2YtYmViNS0xNDViOTExNzFkYzMAuAECAQB4g1oL4hdUJZc1aKfcGo-VQb_jBEsh0RowAd9MxoJqXpEBLMAp--L_MkrHz9sZ2YnMFwAAAH4wfAYJKoZIhvcNAQcGoG8wbQIBADBoBgkqhkiG9w0BBwEwHgYJYIZIAWUDBAEuMBEEDFmfYUdSCZ_zWiypggIBEIA7E6rZP1cDznjWG272IrIySDRqfTYCIU5_tT1TsZmOfQCpLNfdrCxo8IDJp4Nl9YNkL1RHSIZ7Vyt4cZoCAAAAAAwAABAAAAAAAAAAAAAAAAAA0gyxheEDC7TfJID9JZwnE_____8AAAABAAAAAAAAAAAAAAABAAAAm42id6w-0zf7EcvyjN1xO9I6uUH2gm0Ggp5dCfutwJpvJVlRj1ENq1sMpZX8PXREToigD46zlcAT95Xx_q4ffG2ygZTKY9QEqYAZfBRyeXC0aROSDtRL2NLGCJS26j7-6ubuQ52x9wyigIou4DUPyMRLkncF9MjhR4NVveCkkK_WWyXEjob6dW89tdZy2k0VuHX4xr625GTjeQWMc4bCb-Nm3vQQzZE6supzpw%3D%3D"
           frameBorder="0"
         ></iframe>
-
+      ) : (
+        <div>Cargando reporte...</div>
+      )}
     </div>
   );
 };
